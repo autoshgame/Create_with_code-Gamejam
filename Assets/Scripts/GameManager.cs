@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] protected GameObject middldeScreen;
     [SerializeField] protected GameObject endScreen;
     [SerializeField] protected GameObject player;
+    [SerializeField] protected GameObject tileWindow;
+    [SerializeField] protected GameObject settingsWindows;
     [SerializeField] protected List<GameObject> targets;
 
     [SerializeField] protected bool isGameOver;
@@ -22,15 +24,17 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] protected PlayerUI playerUI;
 
+    [SerializeField] protected Slider soundSlider;
+
 
 
     private void Awake()
     {
         player.gameObject.SetActive(false);
+        soundSlider.gameObject.SetActive(false);
         tileScreen.gameObject.SetActive(true);
         endScreen.gameObject.SetActive(false);
         middldeScreen.gameObject.SetActive(false);
-        exitButton.gameObject.SetActive(true);
         pauseScreen.gameObject.SetActive(false);
     }
 
@@ -43,7 +47,6 @@ public class GameManager : MonoBehaviour
      // Update is called once per frame
     void Update()
     {
-        
     }
 
 
@@ -106,6 +109,31 @@ public class GameManager : MonoBehaviour
         Application.Quit();
     }
 
+
+    public void OpenWindowsSettings()
+    {
+        tileWindow.gameObject.SetActive(false);
+        settingsWindows.gameObject.SetActive(true);
+    }
+
+
+    public void CloseWindowsSettings()
+    {
+        tileWindow.gameObject.SetActive(true);
+        settingsWindows.gameObject.SetActive(false);
+    }
+
+
+    public void ActiveSoundSlider()
+    {
+        soundSlider.gameObject.SetActive(true);
+    }
+
+
+    public void InAcvtiveSoundSlider()
+    {
+        soundSlider.gameObject.SetActive(false);
+    }
 
 
 }

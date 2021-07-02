@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class PlayerUI : MonoBehaviour
 {
+    [SerializeField] protected GameManager gameManager;
 
     protected int score = 0;
     public int Score
@@ -23,16 +24,16 @@ public class PlayerUI : MonoBehaviour
             return lives;
         }
     }
-    
-    protected float fitnessPoint;
-    public float FitnessPoint
+
+    protected float healthyPoint = 50;
+    public float HealthyPoint
     {
         get
         {
-            return fitnessPoint;
+            return healthyPoint;
         }
     }
-    [SerializeField] protected float maxFitnessPoint;
+    [SerializeField] protected float maxFitnessPoint = 100;
 
     [SerializeField] protected TextMeshProUGUI scoreText;
     [SerializeField] protected TextMeshProUGUI totalScore;
@@ -46,7 +47,8 @@ public class PlayerUI : MonoBehaviour
     {
         UpdateLives();
         fitnessSlide.maxValue = maxFitnessPoint;
-        fitnessSlide.minValue = FitnessPoint;
+        fitnessSlide.minValue = 0;
+        fitnessSlide.value = healthyPoint;
     }
 
     // Update is called once per frame
@@ -59,7 +61,9 @@ public class PlayerUI : MonoBehaviour
     private void OnGUI()
     {
         UpdateLives();
+        UpdateHealthyPoint();
     }
+
 
     public void UpdateScore(int scoreToAdd)
     {
@@ -70,7 +74,7 @@ public class PlayerUI : MonoBehaviour
 
     public void UpdateLives()
     {
-        livesText.text = "Lives : " + lives.ToString();
+        livesText.text = "Lives : " + (lives).ToString();
     }
 
 
@@ -82,7 +86,10 @@ public class PlayerUI : MonoBehaviour
 
     public void DecreaseLives()
     {
-        lives--;
+        if (lives <= 1)
+            gameManager.GameOver();
+        else
+            lives--;
     }
 
 
@@ -91,15 +98,45 @@ public class PlayerUI : MonoBehaviour
         lives++;
     }
 
-    
-    public void IncreaseFitness()
-    {
 
+    public void DecreaseHealthy()
+    {
+        if (HealthyPoint >= 0)
+            healthyPoint -= 10;
+        else if (HealthyPoint < 0)
+        {
+            DecreaseLives();
+            ResetHealthyPoint(100);
+        }
     }
 
 
-    public void DecreaseFitness()
+    public void IncreaseHeathy()
     {
+        if(HealthyPoint <= 100)
+            healthyPoint += 10;
+        else if (HealthyPoint > 100)
+        {
+            IncreaseLives();
+            ResetHealth();
+        }
+    }
 
+
+    public void UpdateHealthyPoint()
+    {
+        fitnessSlide.value = healthyPoint;
+    }
+
+
+    public void ResetHealth()
+    {
+        healthyPoint = 0;
+    }
+
+
+    public void ResetHealthyPoint(float value)
+    {
+        healthyPoint = value;
     }
 }

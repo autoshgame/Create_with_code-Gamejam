@@ -15,6 +15,7 @@ public class BadTarget : MonoBehaviour
     [SerializeField] protected ParticleSystem explosionParticle;
 
     [SerializeField] protected AudioClip clickSound;
+    [SerializeField] protected AudioClip unheathySound;
 
     [SerializeField] protected AudioSource getAudioSource;
 
@@ -25,7 +26,6 @@ public class BadTarget : MonoBehaviour
     void Start()
     {
         targetRB = this.GetComponent<Rigidbody>();
-        targetRB.AddForce(RandomForce(), ForceMode.Impulse);
         targetRB.AddTorque(RandomTorque(), ForceMode.Impulse);
         targetRB.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
         this.transform.position = RandomPosition();
@@ -37,13 +37,13 @@ public class BadTarget : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        outOfBound();
+        OutOfBound();
     }
 
 
     public Vector3 RandomPosition()
     {
-        return new Vector3(Random.Range(-4, 4), -2, 0);
+        return new Vector3(Random.Range(-4, 4), 11, 0);
     }
 
 
@@ -53,15 +53,13 @@ public class BadTarget : MonoBehaviour
     }
 
 
-    public Vector3 RandomForce()
-    {
-        return Vector3.up * Random.Range(12, 16);
-    }
-
-
-    public void outOfBound()
+    public void OutOfBound()
     {
         if (playerUI.Lives > 0 && this.transform.position.y <= -3f)
+        {
+            Destroy(this.gameObject);
+        }
+        else if (gameManager.IsGameOver())
         {
             Destroy(this.gameObject);
         }
@@ -76,6 +74,17 @@ public class BadTarget : MonoBehaviour
             Instantiate(explosionParticle, transform.position, explosionParticle.transform.rotation);
             getAudioSource.PlayOneShot(clickSound, 1f);
             playerUI.UpdateScore(pointValue);
+        }
+    }
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.CompareTag("Player") && targetRB.velocity.y <= -0.01f)
+        {
+            Destroy(this.gameObject);
+            getAudioSource.PlayOneShot(unheathySound, 1f);
+            playerUI.DecreaseHealthy();
         }
     }
 }

@@ -7,19 +7,22 @@ using UnityEngine.UI;
 
 public class SetVolume : MonoBehaviour
 {
+    [SerializeField] protected GameObject SetAudio;
     [SerializeField] protected AudioMixer myAudioMixer;
     
-    [SerializeField] protected Slider mySlide;
+    [SerializeField] protected Slider audioSlide;
+  
     
 
-    public void Awake()
+    protected void Start()
     {
-        mySlide.value = 0.4673916f;
+        audioSlide.value = 0.4673916f;
+        myAudioMixer.SetFloat("Volume", Mathf.Log10(audioSlide.value) * 40);
     }
-
-
+    
+    
     public void SetLevel()
     {
-        myAudioMixer.SetFloat("MusicVol", Mathf.Log10(mySlide.value) * 20);
+        myAudioMixer.SetFloat("Volume", Mathf.Log10(audioSlide.value) * 40);
     }
 }

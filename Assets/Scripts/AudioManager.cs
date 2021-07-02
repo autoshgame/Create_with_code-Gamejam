@@ -26,7 +26,7 @@ public class AudioManager : MonoBehaviour
         if(gameManager.IsGameOver() && !isGameOverPlayed)
         {
             gameAudio.PlayDelayed(8);
-            gameAudio.PlayOneShot(gameOverAudio);
+            gameAudio.PlayOneShot(gameOverAudio, 2f);
             isGameOverPlayed = true;
         }
     }

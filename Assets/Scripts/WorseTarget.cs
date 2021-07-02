@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class WorseTarget : MonoBehaviour
 {
+    protected bool isAudioPlayed = false;
+
     private Rigidbody targetRB;
 
     [SerializeField] protected int pointValue;
@@ -25,7 +27,6 @@ public class WorseTarget : MonoBehaviour
     void Start()
     {
         targetRB = this.GetComponent<Rigidbody>();
-        targetRB.AddForce(RandomForce(), ForceMode.Impulse);
         targetRB.AddTorque(RandomTorque(), ForceMode.Impulse);
         targetRB.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
         this.transform.position = RandomPosition();
@@ -37,13 +38,13 @@ public class WorseTarget : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        outOfBound();
+        OutOfBound();
     }
 
 
     public Vector3 RandomPosition()
     {
-        return new Vector3(Random.Range(-4, 4), -2, 0);
+        return new Vector3(Random.Range(-4, 4), 11, 0);
     }
 
 
@@ -53,15 +54,13 @@ public class WorseTarget : MonoBehaviour
     }
 
 
-    public Vector3 RandomForce()
-    {
-        return Vector3.up * Random.Range(12, 16);
-    }
-
-
-    public void outOfBound()
+    public void OutOfBound()
     {
         if (gameManager.IsGameOver() == false && this.transform.position.y <= -3f)
+        {
+            Destroy(this.gameObject);
+        }
+        else if (gameManager.IsGameOver())
         {
             Destroy(this.gameObject);
         }
@@ -76,6 +75,20 @@ public class WorseTarget : MonoBehaviour
             Instantiate(explosionParticle, transform.position, explosionParticle.transform.rotation);
             getAudioSource.PlayOneShot(explosionSound, 1f);
             playerUI.DecreaseLives();
+            playerUI.ResetHealth();
+        }
+    }
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.CompareTag("Player") && targetRB.velocity.y <= -0.01f)
+        {
+            Destroy(this.gameObject);
+            Instantiate(explosionParticle, transform.position, explosionParticle.transform.rotation);
+            getAudioSource.PlayOneShot(explosionSound, 1f);
+            playerUI.DecreaseLives();
+            playerUI.ResetHealth();
         }
     }
 }

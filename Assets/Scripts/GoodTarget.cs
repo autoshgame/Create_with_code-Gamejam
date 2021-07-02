@@ -15,7 +15,7 @@ public class GoodTarget : MonoBehaviour
     [SerializeField] protected ParticleSystem explosionParticle;
 
     [SerializeField] protected AudioClip clickSound;
-    [SerializeField] protected AudioClip bonusSound;
+    [SerializeField] protected AudioClip heathySound;
 
     [SerializeField] protected AudioSource getAudioSource;
 
@@ -26,7 +26,6 @@ public class GoodTarget : MonoBehaviour
     void Start()
     {
         targetRB = this.GetComponent<Rigidbody>();
-        targetRB.AddForce(RandomForce(), ForceMode.Impulse);
         targetRB.AddTorque(RandomTorque(), ForceMode.Impulse);
         targetRB.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
         this.transform.position = RandomPosition();
@@ -38,13 +37,13 @@ public class GoodTarget : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        outOfBound();
+        OutOfBound();
     }
     
     
     public Vector3 RandomPosition()
     {
-        return new Vector3(Random.Range(-4, 4), -2, 0);
+        return new Vector3(Random.Range(-4, 4), 11, 0);
     }
 
     
@@ -53,19 +52,16 @@ public class GoodTarget : MonoBehaviour
         return new Vector3(Random.value, Random.value, Random.value);
     }
 
-   
-    public Vector3 RandomForce()
-    {
-        return Vector3.up * Random.Range(12, 16);
-    }
 
-
-    public void outOfBound()
+    public void OutOfBound()
     {
         if (gameManager.IsGameOver() == false && this.transform.position.y <= -3f)
         {
             Destroy(this.gameObject);
-            playerUI.DecreaseLives();
+        }
+        else if (gameManager.IsGameOver())
+        {
+            Destroy(this.gameObject);
         }
     }
 
@@ -83,11 +79,12 @@ public class GoodTarget : MonoBehaviour
 
     private void OnTriggerEnter(Collider collision)
     {
-        if (collision.gameObject.CompareTag("Player") && targetRB.velocity.y <= 0.01f)
+        if (collision.gameObject.CompareTag("Player") && targetRB.velocity.y <= -0.01f)
         {
             Destroy(this.gameObject);
-            getAudioSource.PlayOneShot(bonusSound, 1f);
+            getAudioSource.PlayOneShot(heathySound, 1f);
             playerUI.UpdateScore(5);
+            playerUI.IncreaseHeathy();
         }
     }
 }

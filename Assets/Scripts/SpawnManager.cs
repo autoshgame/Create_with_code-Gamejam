@@ -10,6 +10,8 @@ public class SpawnManager : MonoBehaviour
 
     [SerializeField] protected GameManager gameManager;
 
+    [SerializeField] protected PlayerUI playerUI;
+
 
     // Start is called before the first frame update
     void Start()
